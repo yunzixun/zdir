@@ -22,7 +22,12 @@ function copy(url){
 	//重组url
 	protocol = window.location.protocol;		//获取协议
 	host = window.location.host;				//获取主机
-	url = protocol + '//' + host + '/' + url;
+	dir = window.location.pathname;				//获取目录
+	dir = dir.replace("index.php","");
+	
+	url = protocol + '//' + host + dir + url;
+
+	//console.log(url);
 
 	//获取文件后缀
 	var index1=url.lastIndexOf(".");
@@ -60,6 +65,54 @@ function copy(url){
     });
 }
 
+//复制按钮
+function scopy(url){
+	url = url.replace("./","");
+	//重组url
+	protocol = window.location.protocol;		//获取协议
+	host = window.location.host;				//获取主机
+	dir = window.location.pathname;				//获取目录
+	dir = dir.replace("index.php","");
+	
+	url = protocol + '//' + host + url;
+
+	//console.log(url);
+
+	//获取文件后缀
+	var index1=url.lastIndexOf(".");
+	var index2=url.length;
+	var suffix=url.substring(index1+1,index2);
+
+	switch(suffix){
+		case 'js':
+			url = "<script src = '" + url + "'></script>";
+			break;
+		case 'css':
+			url = "<link rel='stylesheet' href='" + url + "'>";
+		default:
+			//如果是图片
+			if((suffix == 'jpg') || (suffix == 'jpeg') || (suffix == 'gif') || (suffix == 'bmp') || (suffix == 'png')){
+				url = "<img src = '" + url + "' />";
+			}
+			else{
+				url = url;
+			}
+		break;
+	}
+	
+	
+	var copy = new clipBoard(document.getElementById('list'), {
+        beforeCopy: function() {
+            
+        },
+        copy: function() {
+            return url;
+        },
+        afterCopy: function() {
+			layer.msg('复制成功！');
+        }
+    });
+}
 //查看markdown文件
 function viewmd(url){
 	url = url.replace("./","");
@@ -105,6 +158,28 @@ function viewtext(url){
 	  	type: 2, 
 	  	area: ['80%', '80%'],
 	  	content: url //这里content是一个普通的String
+	});
+}
+//预览office
+function office(url){
+	//文件名
+	filename = url;
+	var uri = url.replace("./","/");
+	uri = encodeURI(uri);
+	//获取协议
+	var protocol = window.location.protocol + '//';
+	//获取主机
+	var host = window.location.host;
+	//获取页面目录，通常是二级目录的情况下
+	var pathname = window.location.pathname;
+	pathname = pathname.replace("index.php","");
+	url = protocol + host + pathname + uri;
+	var apiurl = "https://view.officeapps.live.com/op/view.aspx?src=" + url;
+	layer.open({
+		title:filename,
+	  	type: 2, 
+	  	area: ['80%', '80%'],
+	  	content: apiurl //这里content是一个普通的String
 	});
 }
 //预览PDF文件

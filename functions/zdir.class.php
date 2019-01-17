@@ -19,7 +19,11 @@
 		    	case 'doc':
 		    	case 'docx':
 		    		$ico = "fa fa-file-word-o";
-		    		break;
+					break;
+				case 'ppt':
+				case 'pptx':
+					$ico = "fa fa-file-powerpoint-o";
+					break;
 		    	case 'xls':
 		    	case 'xlsx':
 		    		$ico = "fa fa-file-excel-o";
@@ -192,6 +196,26 @@
 				return false;
 			}
 		}
+		//判断是否是office文档
+		function office($filepath){
+			$suffix = explode(".",$filepath);
+			$suffix = end($suffix);
+			$suffix = strtolower($suffix);
+
+			switch ($suffix) {
+				case 'doc':
+				case 'docx':
+				case 'xls':
+				case 'xlsx':
+				case 'ppt':
+				case 'pptx':
+					return true;
+					break;
+				default:
+					return false;
+					break;
+			}
+		}
 		//获取文件后缀
 		function suffix($filepath){
 			//获取文件后缀
@@ -289,6 +313,17 @@
 				exit;
 			}
 		}
+		//域名切换按钮
+		function https(){
+			//获取当前主机名
+			$server = $_SERVER['SERVER_NAME'];
+			if($server == 'soft.xiaoz.org'){
+				echo '<a href = "https://wget.ovh/"><i class="fa fa-expeditedssl" aria-hidden="true"></i> HTTPS</a>';
+			}
+			else{
+				echo '<a href = "http://soft.xiaoz.org/"><i class="fa fa-globe" aria-hidden="true"></i> HTTP</a>';
+			}
+		}
 	}
 	//预览pdf
 	function viewpdf($filepath){
@@ -298,6 +333,7 @@
 		fclose($file);
 		return $file;
 	}
+	
 	
 
 	$zdir = new Zdir;

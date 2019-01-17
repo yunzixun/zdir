@@ -1,6 +1,8 @@
 <?php
 	error_reporting(E_ALL^E_NOTICE^E_WARNING^E_DEPRECATED);
 	include_once("./config.php");
+	//载入zdir类
+	include_once("./functions/zdir.class.php");
 	@$del = $_GET['del'];
 	//缓存文件夹路径
 	$cachefile = "./functions/caches/indexes.html";
@@ -15,15 +17,19 @@
 	//删除缓存文件
 	if($del == 'cache') {
 		unlink($cachefile);
-		header("location:./cache.php");
+		header("location:./index.php?c=cache");
 		exit;
 	}
 	//判断缓存文件是否存在
 	if((!file_exists($cachefile)) || ($diff > 24)){
 		$url = get_url();
-		$curl = curl_init($url."indexes.php");
+		$url = $url."functions/indexes.php";
+		$url = str_replace("\\","/",$url);
+		$curl = curl_init($url);
 
-	    curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (compatible; Baiduspider/2.0; +http://www.baidu.com/search/spider.html)");
+		//echo $url;
+
+	    curl_setopt($curl, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36");
 	    curl_setopt($curl, CURLOPT_FAILONERROR, true);
 	    curl_setopt($curl, CURLOPT_FOLLOWLOCATION, true);
 	    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
@@ -69,7 +75,14 @@
 		
 		//或如URI
 		$uri =  $_SERVER["REQUEST_URI"];
-		$uri = str_replace("cache.php","",$uri);
+		$uri = dirname($uri);
+		$uri = str_replace("\\",'/',$uri);
+		//二级目录
+		if($uri != '/'){
+			$uri = $uri.'/';
+		}
+		
+		//$uri = str_replace("cache.php","",$uri);
 		//组合为完整的URL
 		$domain = $protocol.$_SERVER['SERVER_NAME'].$port.$uri;
 		return $domain;
